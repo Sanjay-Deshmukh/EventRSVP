@@ -1,0 +1,21 @@
+RSVP Export:
+
+Event: ADS
+Location: Pune
+Date & Time: 2025-03-24T16:00
+Attendees:
+ - chinmay44
+ - Jay Deshmukh
+
+Event: xyz
+Location: Lonavla
+Date & Time: 2025-04-24T20:00
+Attendees:
+ - chinmay44
+ - Jay Deshmukh
+
+Event: AIML
+Location: mumbai
+Date & Time: 2025-03-24T16:00
+Attendees:
+ - chinmay44
