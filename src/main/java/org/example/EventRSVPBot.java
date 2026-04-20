@@ -18,6 +18,9 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +28,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class EventRSVPBot extends TelegramLongPollingBot {
+    private static final Path PROJECT_ROOT = resolveProjectRoot();
+    private static final String DATABASE_URL = "jdbc:sqlite:" + PROJECT_ROOT.resolve("eventrsvp.db").toString();
 
     static class Event {
         String name;
@@ -52,6 +57,12 @@ public class EventRSVPBot extends TelegramLongPollingBot {
 
     public EventRSVPBot() {
         initDatabase();
+        loadEventsFromDatabase();
+    }
+
+    private void refreshEventsFromDatabase() {
+        events.clear();
+        userFeedback.clear();
         loadEventsFromDatabase();
     }
 
@@ -176,6 +187,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void recommendEvents(String chatId, String username) {
+        refreshEventsFromDatabase();
         List<Event> userPastEvents = new ArrayList<>();
         List<Event> upcomingEvents = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
@@ -283,6 +295,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void showNextEvent(String chatId) {
+        refreshEventsFromDatabase();
         if (events.isEmpty()) {
             sendMessage(chatId, " No events available.");
             return;
@@ -335,6 +348,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void showEvents(String chatId) {
+        refreshEventsFromDatabase();
         if (events.isEmpty()) {
             sendMessage(chatId, " No events available.");
             return;
@@ -368,6 +382,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void showMyEvents(String chatId, String username) {
+        refreshEventsFromDatabase();
         List<String> userEvents = new ArrayList<>();
         for (Event e : events.values()) {
             if (e.attendees.contains(username)) {
@@ -398,6 +413,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void searchEvents(String text, String chatId) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Usage: /search keyword");
@@ -443,6 +459,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void handleRSVP(String text, String chatId, String username) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Please specify event name. Usage: /rsvp EventName");
@@ -502,6 +519,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void handleCancelRSVP(String text, String chatId, String username) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Please specify event name. Usage: /cancel EventName");
@@ -523,6 +541,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void setReminder(String text, String chatId, String username) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Usage: /remind EventName");
@@ -557,6 +576,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void generateQRCode(String text, String chatId, String username) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Usage: /qrcode EventName");
@@ -594,6 +614,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void showAttendees(String text, String chatId) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Usage: /attendees EventName");
@@ -621,6 +642,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void createEvent(String text, String chatId) {
+        refreshEventsFromDatabase();
         try {
             String[] parts = text.substring(13).split("\\|");
             String name = parts[0].trim();
@@ -656,6 +678,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void broadcastMessage(String text, String chatId) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 3);
         if (parts.length < 3) {
             sendMessage(chatId, " Usage: /broadcast EventName Your message here");
@@ -684,6 +707,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void showStats(String chatId) {
+        refreshEventsFromDatabase();
         int totalEvents = events.size();
         int totalRSVPs = 0;
         String mostPopular = "";
@@ -714,6 +738,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void exportToExcel(String chatId) {
+        refreshEventsFromDatabase();
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("RSVP Data");
 
@@ -755,6 +780,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private void closeEvent(String text, String chatId) {
+        refreshEventsFromDatabase();
         String[] parts = text.split(" ", 2);
         if (parts.length < 2) {
             sendMessage(chatId, " Usage: /close EventName");
@@ -810,7 +836,8 @@ public class EventRSVPBot extends TelegramLongPollingBot {
 
     private void initDatabase() {
         try {
-            dbConnection = DriverManager.getConnection("jdbc:sqlite:eventrsvp.db");
+            dbConnection = DriverManager.getConnection(DATABASE_URL);
+            System.out.println("Bot using database: " + PROJECT_ROOT.resolve("eventrsvp.db"));
             Statement stmt = dbConnection.createStatement();
             
             stmt.execute("CREATE TABLE IF NOT EXISTS events (" +
@@ -949,5 +976,16 @@ public class EventRSVPBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Path resolveProjectRoot() {
+        Path current = Paths.get("").toAbsolutePath().normalize();
+        while (current != null) {
+            if (Files.exists(current.resolve("pom.xml")) && Files.exists(current.resolve("web"))) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        return Paths.get("").toAbsolutePath().normalize();
     }
 }

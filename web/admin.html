@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | EventRSVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="admin">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+    <header class="site-header">
+        <div class="shell header-shell">
+            <a class="brand-lockup" href="index.html"><span class="eyebrow">Smart Event Coordination</span><strong class="brand-mark">EventRSVP</strong></a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="events.html">Browse Events</a>
+                <a class="nav-link" href="planner.html">My Planner</a>
+                <a class="nav-link" href="recommendations.html">Recommendations</a>
+                <a class="nav-link is-active" id="admin-nav-link" href="admin.html">Admin</a>
+            </nav>
+            <section class="auth-shell">
+                <div class="auth-guest" id="auth-guest">
+                    <a class="primary-btn" href="login.html">Login</a>
+                    <a class="ghost-btn" href="login.html">Create account</a>
+                </div>
+                <div class="auth-user" id="auth-user" style="display:none;">
+                    <span class="user-avatar" id="user-avatar">G</span>
+                    <div class="user-info"><span class="auth-label">Signed in as</span><strong id="username-display">Guest</strong><span class="auth-role" id="role-display">User</span></div>
+                    <button id="logout-btn" class="ghost-btn">Log out</button>
+                </div>
+            </section>
+        </div>
+    </header>
+    <main class="shell page-stack">
+        <section class="page-hero spacious-hero">
+            <div><p class="section-kicker">Admin Dashboard</p><h1>Manage events, stats, and attendance from one protected space.</h1></div>
+            <p class="hero-lead narrow-lead">Default admin login is <strong>admin</strong> with password <strong>admin123</strong>. Change that in the database for production use.</p>
+        </section>
+        <section id="admin-gate" class="editorial-panel soft-panel admin-gate"><p class="section-kicker">Access Control</p><h2>Admin access required</h2><p class="support-copy">Log in with an admin account to open the dashboard tools.</p></section>
+        <section id="admin-dashboard" class="admin-dashboard" style="display:none;">
+            <div class="metrics-ribbon admin-stats-grid">
+                <article><span class="metric-label">Total events</span><strong id="admin-stat-events">0</strong></article>
+                <article><span class="metric-label">Open events</span><strong id="admin-stat-open">0</strong></article>
+                <article><span class="metric-label">Users</span><strong id="admin-stat-users">0</strong></article>
+                <article><span class="metric-label">RSVPs</span><strong id="admin-stat-rsvps">0</strong></article>
+            </div>
+            <section class="planner-stage generous-space">
+                <div class="editorial-panel soft-panel admin-form-panel">
+                    <p class="section-kicker">Create Event</p>
+                    <h2 id="admin-form-title">Add a new event</h2>
+                    <input type="hidden" id="admin-event-original-name">
+                    <div class="admin-form-grid">
+                        <input type="text" id="admin-event-name" placeholder="Event name">
+                        <input type="datetime-local" id="admin-event-datetime">
+                        <input type="text" id="admin-event-location" placeholder="Location">
+                        <input type="number" id="admin-event-capacity" min="1" placeholder="Max attendees">
+                    </div>
+                    <div class="auth-actions">
+                        <button id="admin-create-event-btn" class="primary-btn">Create event</button>
+                        <button id="admin-cancel-edit-btn" class="ghost-btn" style="display:none;">Cancel edit</button>
+                    </div>
+                </div>
+                <div class="editorial-panel soft-panel admin-form-panel">
+                    <p class="section-kicker">Attendee Lookup</p>
+                    <h2>See who joined an event</h2>
+                    <div class="search-bar stacked-search"><input type="text" id="admin-attendees-event" placeholder="Exact event name"><button id="admin-load-attendees-btn" class="ghost-btn compact-btn">Load attendees</button></div>
+                    <div id="admin-attendees-results" class="admin-attendees-list"></div>
+                </div>
+            </section>
+            <section class="section-block generous-space"><div class="section-heading-row"><div><p class="section-kicker">Manage Events</p><h2>Review current events and close RSVP access when needed.</h2></div></div><div id="admin-events-list" class="event-stream"></div></section>
+        </section>
+    </main>
+    <div id="modal" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal()" aria-label="Close dialog">x</button><p class="section-kicker" id="modal-title"></p><div id="modal-message" class="modal-message"></div><div id="modal-buttons" class="modal-actions"></div></div></div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EventRSVP </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .split-login-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 0;
+            gap: 60px;
+        }
+
+        .login-visual {
+            flex: 1.2;
+            height: 640px;
+            border-radius: var(--radius-xl);
+            background-image: url('assets/event_login_bg.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 40px 100px rgba(21, 35, 58, 0.15);
+            overflow: hidden;
+            transform: translateY(0);
+            animation: floatImage 8s ease-in-out infinite;
+        }
+
+        .login-visual::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(220,116,90,0) 20%, rgba(21,35,58,0.4) 100%);
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes floatImage {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); box-shadow: 0 50px 110px rgba(21, 35, 58, 0.2); }
+        }
+
+        .login-content {
+            flex: 0.8;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-xl);
+            padding: 55px 45px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-content::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(220, 116, 90, 0.15);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+        }
+        
+        .login-content::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(139, 165, 148, 0.25);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+        }
+
+        .login-header {
+            margin-bottom: 35px;
+        }
+
+        .login-header h1 {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--deep) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+        }
+
+        .login-header p {
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .auth-form-custom {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--deep);
+            font-weight: 700;
+        }
+
+        .input-group input {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid transparent;
+            color: var(--ink);
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+            width: 100%;
+        }
+
+        .input-group input:focus {
+            background: #ffffff;
+            border-color: rgba(220, 116, 90, 0.4);
+            box-shadow: 0 0 0 4px rgba(220, 116, 90, 0.12), inset 0 2px 5px rgba(0,0,0,0.02);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        .auth-actions-custom {
+            display: flex;
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .auth-actions-custom button {
+            flex: 1;
+            padding: 16px 20px;
+            font-size: 1.02rem;
+            border-radius: var(--radius-md);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+        }
+
+        .auth-actions-custom .primary-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+            color: #fff9f5;
+            box-shadow: 0 12px 24px rgba(220, 116, 90, 0.28);
+            border: none;
+        }
+
+        .auth-actions-custom .primary-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 30px rgba(220, 116, 90, 0.38);
+        }
+
+        .auth-actions-custom .ghost-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(21, 35, 58, 0.08);
+            color: var(--ink);
+            box-shadow: 0 6px 16px rgba(21, 35, 58, 0.05);
+        }
+
+        .auth-actions-custom .ghost-btn:hover {
+            background: #ffffff;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(21, 35, 58, 0.1);
+        }
+
+        .admin-hint {
+            margin-top: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: var(--muted);
+            padding: 16px;
+            background: rgba(21, 35, 58, 0.03);
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(21, 35, 58, 0.12);
+        }
+
+        @media (max-width: 992px) {
+            .split-login-container {
+                flex-direction: column-reverse;
+                gap: 40px;
+                padding: 20px 0;
+            }
+            .login-visual {
+                width: 100%;
+                height: 340px;
+                animation: none;
+                flex: none;
+            }
+            .login-content {
+                width: 100%;
+                max-width: 100%;
+                padding: 40px 30px;
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body data-page="login">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="site-header">
+        <div class="shell header-shell">
+            <a class="brand-lockup" href="index.html">
+                <span class="eyebrow">Smart Event Coordination</span>
+                <strong class="brand-mark">EventRSVP</strong>
+            </a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="events.html">Browse Events</a>
+                <a class="nav-link" href="planner.html">My Planner</a>
+                <a class="nav-link" href="recommendations.html">Recommendations</a>
+                <a class="nav-link" id="admin-nav-link" href="admin.html" style="display:none;">Admin</a>
+            </nav>
+            <section class="auth-shell">
+                <div class="auth-guest" id="auth-guest" style="display:none;">
+                    <a class="primary-btn" href="login.html">Login</a>
+                    <a class="ghost-btn" href="login.html">Create account</a>
+                </div>
+                <div class="auth-user" id="auth-user" style="display:none;">
+                    <span class="user-avatar" id="user-avatar">G</span>
+                    <div class="user-info">
+                        <span class="auth-label">Signed in as</span>
+                        <strong id="username-display">Guest</strong>
+                        <span class="auth-role" id="role-display">User</span>
+                    </div>
+                    <button id="logout-btn" class="ghost-btn">Log out</button>
+                </div>
+            </section>
+        </div>
+    </header>
+
+    <main class="shell">
+        <div class="split-login-container">
+            <div class="login-content">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in once to unlock your personal event planner, history, and seamless RSVP experience.</p>
+                </div>
+                
+                <!-- We must use #auth-form to hook into existing script.js logic without modifying it -->
+                <div class="auth-form-custom" id="auth-form">
+                    <div class="input-group">
+                        <label for="username-input">Username</label>
+                        <input type="text" id="username-input" placeholder="e.g. eventgoer">
+                    </div>
+                    <div class="input-group">
+                        <label for="password-input">Password</label>
+                        <input type="password" id="password-input" placeholder="••••••••">
+                    </div>
+                    
+                    <div class="auth-actions-custom">
+                        <button id="login-btn" class="primary-btn">Login</button>
+                        <button id="register-btn" class="ghost-btn">Register</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="login-visual"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer" style="margin-top: 40px; border-top: 1px solid rgba(21, 35, 58, 0.08);">
+        <div class="shell footer-shell" style="border-top: none; padding-top: 0;">
+            <div>
+                <p class="eyebrow">EventRSVP</p>
+                <p class="support-copy">A multi-page event website paired with a reliable backend.</p>
+            </div>
+            <div class="footer-links">
+                <a href="events.html">Browse</a>
+                <a href="planner.html">Planner</a>
+                <a href="recommendations.html">Recommendations</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()" aria-label="Close dialog">x</button>
+            <p class="section-kicker" id="modal-title"></p>
+            <div id="modal-message" class="modal-message"></div>
+            <div id="modal-buttons" class="modal-actions"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

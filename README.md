@@ -187,3 +187,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 - Java & Maven open source community
 - Apache POI for Excel support
 - ZXing for QR code generation
+- C:\Users\Sanja\apache-maven-3.9.14\bin\mvn.cmd clean compile exec:java

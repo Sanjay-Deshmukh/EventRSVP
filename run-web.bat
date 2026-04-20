@@ -1,0 +1,3 @@
+@echo off
+echo Starting EventRSVP Web Server...
+mvn exec:java "-Dexec.mainClass=org.example.EventWebServer"

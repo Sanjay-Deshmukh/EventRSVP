@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventRSVP | Beautiful Event Planning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="home">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="site-header">
+        <div class="shell header-shell">
+            <a class="brand-lockup" href="index.html">
+                <span class="eyebrow">Smart Event Coordination</span>
+                <strong class="brand-mark">EventRSVP</strong>
+            </a>
+
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a class="nav-link is-active" href="index.html">Home</a>
+                <a class="nav-link" href="events.html">Browse Events</a>
+                <a class="nav-link" href="planner.html">My Planner</a>
+                <a class="nav-link" href="recommendations.html">Recommendations</a>
+                <a class="nav-link" id="admin-nav-link" href="admin.html" style="display:none;">Admin</a>
+            </nav>
+
+            <section class="auth-shell">
+                <div class="auth-guest" id="auth-guest">
+                    <a class="primary-btn" href="login.html">Login</a>
+                    <a class="ghost-btn" href="login.html">Create account</a>
+                </div>
+                <div class="auth-user" id="auth-user" style="display:none;">
+                    <span class="user-avatar" id="user-avatar">G</span>
+                    <div class="user-info">
+                        <span class="auth-label">Signed in as</span>
+                        <strong id="username-display">Guest</strong>
+                        <span class="auth-role" id="role-display">User</span>
+                    </div>
+                    <button id="logout-btn" class="ghost-btn">Log out</button>
+                </div>
+            </section>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section shell">
+            <div class="hero-copy editorial-panel dark-panel">
+                <p class="section-kicker">A calmer way to plan</p>
+                <h1>Discover events in a spacious, editorial experience instead of a crowded dashboard.</h1>
+                <p class="hero-lead">
+                    Browse upcoming experiences, sign in with a real account, and move from inspiration to RSVP without noise.
+                </p>
+                <div class="hero-actions">
+                    <a class="primary-btn" href="events.html">Browse Events</a>
+                    <a class="ghost-btn ghost-on-dark" href="planner.html">Open My Planner</a>
+                </div>
+            </div>
+
+            <div class="hero-side stack-layout">
+                <section class="editorial-panel soft-panel intro-panel">
+                    <p class="section-kicker">Live Snapshot</p>
+                    <h2 id="hero-next-event">Syncing event feed</h2>
+                    <p id="hero-next-time" class="support-copy">The next event preview appears here.</p>
+                    <a class="text-link" href="events.html">See all upcoming events</a>
+                </section>
+
+                <section class="editorial-panel accent-panel">
+                    <p class="section-kicker">Personal Layer</p>
+                    <h3 id="hero-recommendation-count">Adaptive recommendations</h3>
+                    <p class="support-copy">Log in to unlock suggestions shaped by your attendance history.</p>
+                </section>
+            </div>
+        </section>
+
+        <section class="shell metrics-ribbon">
+            <article>
+                <span class="metric-label">Listed events</span>
+                <strong id="stat-total-events">0</strong>
+            </article>
+            <article>
+                <span class="metric-label">Open seats</span>
+                <strong id="stat-open-events">0</strong>
+            </article>
+            <article>
+                <span class="metric-label">My RSVPs</span>
+                <strong id="stat-my-events">0</strong>
+            </article>
+        </section>
+
+        <section class="shell story-grid generous-space">
+            <article class="story-block">
+                <p class="section-kicker">Why it feels lighter</p>
+                <h2>Each part of the experience has its own page and its own breathing room.</h2>
+            </article>
+            <article class="story-copy">
+                <p>
+                    The site separates discovery, personal planning, recommendations, and administration into dedicated destinations. That means less visual competition, more generous spacing, and cleaner role-based access.
+                </p>
+            </article>
+        </section>
+
+        <section class="shell split-stage generous-space">
+            <div class="section-heading-row">
+                <div>
+                    <p class="section-kicker">Upcoming Preview</p>
+                    <h2>See what is coming next without committing to the full event browser.</h2>
+                </div>
+                <a class="text-link" href="events.html">Open the full event library</a>
+            </div>
+            <div id="landing-events-preview" class="preview-rail"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-shell">
+            <div>
+                <p class="eyebrow">EventRSVP</p>
+                <p class="support-copy">A multi-page event website powered by the same shared database as the Telegram bot.</p>
+            </div>
+            <div class="footer-links">
+                <a href="events.html">Browse</a>
+                <a href="planner.html">Planner</a>
+                <a href="recommendations.html">Recommendations</a>
+                <a id="admin-footer-link" href="admin.html" style="display:none;">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()" aria-label="Close dialog">x</button>
+            <p class="section-kicker" id="modal-title"></p>
+            <div id="modal-message" class="modal-message"></div>
+            <div id="modal-buttons" class="modal-actions"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Planner | EventRSVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="planner">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+    <header class="site-header">
+        <div class="shell header-shell">
+            <a class="brand-lockup" href="index.html"><span class="eyebrow">Smart Event Coordination</span><strong class="brand-mark">EventRSVP</strong></a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="events.html">Browse Events</a>
+                <a class="nav-link is-active" href="planner.html">My Planner</a>
+                <a class="nav-link" href="recommendations.html">Recommendations</a>
+                <a class="nav-link" id="admin-nav-link" href="admin.html" style="display:none;">Admin</a>
+            </nav>
+            <section class="auth-shell">
+                <div class="auth-guest" id="auth-guest">
+                    <a class="primary-btn" href="login.html">Login</a>
+                    <a class="ghost-btn" href="login.html">Create account</a>
+                </div>
+                <div class="auth-user" id="auth-user" style="display:none;">
+                    <span class="user-avatar" id="user-avatar">G</span>
+                    <div class="user-info"><span class="auth-label">Signed in as</span><strong id="username-display">Guest</strong><span class="auth-role" id="role-display">User</span></div>
+                    <button id="logout-btn" class="ghost-btn">Log out</button>
+                </div>
+            </section>
+        </div>
+    </header>
+    <main class="shell page-stack">
+        <section class="page-hero spacious-hero">
+            <div><p class="section-kicker">My Planner</p><h1>Your personal event flow, separated from discovery.</h1></div>
+            <p class="hero-lead narrow-lead">This page focuses on your next commitment, the events you already joined, and the tools you need to manage your schedule.</p>
+        </section>
+        <section class="planner-stage generous-space">
+            <div class="editorial-panel dark-panel spotlight-panel"><p class="section-kicker">Next Commitment</p><div id="next-event"></div></div>
+            <div class="editorial-panel soft-panel search-workbench"><p class="section-kicker">Search the Library</p><h2>Need to add one more event?</h2><div class="search-bar stacked-search"><input type="text" id="planner-search-input" placeholder="Search by title or location"><button id="planner-search-btn" class="primary-btn compact-btn">Search</button></div><div id="planner-search-results" class="event-stream compact-stream"></div></div>
+        </section>
+        <section class="section-block generous-space"><div class="section-heading-row"><div><p class="section-kicker">My RSVPs</p><h2>Your booked schedule, presented in a clean timeline-like list.</h2></div></div><div id="my-events-list" class="event-stream"></div></section>
+    </main>
+    <div id="modal" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal()" aria-label="Close dialog">x</button><p class="section-kicker" id="modal-title"></p><div id="modal-message" class="modal-message"></div><div id="modal-buttons" class="modal-actions"></div></div></div>
+    <script src="script.js"></script>
+</body>
+</html>

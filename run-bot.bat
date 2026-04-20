@@ -1,0 +1,3 @@
+@echo off
+echo Starting EventRSVP Telegram Bot...
+mvn exec:java "-Dexec.mainClass=org.example.EventRSVPBot"

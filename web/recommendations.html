@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations | EventRSVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="recommendations">
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+    <header class="site-header">
+        <div class="shell header-shell">
+            <a class="brand-lockup" href="index.html"><span class="eyebrow">Smart Event Coordination</span><strong class="brand-mark">EventRSVP</strong></a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="events.html">Browse Events</a>
+                <a class="nav-link" href="planner.html">My Planner</a>
+                <a class="nav-link is-active" href="recommendations.html">Recommendations</a>
+                <a class="nav-link" id="admin-nav-link" href="admin.html" style="display:none;">Admin</a>
+            </nav>
+            <section class="auth-shell">
+                <div class="auth-guest" id="auth-guest">
+                    <a class="primary-btn" href="login.html">Login</a>
+                    <a class="ghost-btn" href="login.html">Create account</a>
+                </div>
+                <div class="auth-user" id="auth-user" style="display:none;">
+                    <span class="user-avatar" id="user-avatar">G</span>
+                    <div class="user-info"><span class="auth-label">Signed in as</span><strong id="username-display">Guest</strong><span class="auth-role" id="role-display">User</span></div>
+                    <button id="logout-btn" class="ghost-btn">Log out</button>
+                </div>
+            </section>
+        </div>
+    </header>
+    <main class="shell page-stack">
+        <section class="page-hero spacious-hero">
+            <div><p class="section-kicker">Recommendations</p><h1>A dedicated page for the events most likely to feel right for you.</h1></div>
+            <p class="hero-lead narrow-lead">This page gives recommendations room to breathe and explains the context behind each suggestion.</p>
+        </section>
+        <section class="editorial-panel soft-panel memory-panel generous-space"><p class="section-kicker">Your attendance memory</p><div id="recommendation-memory"></div></section>
+        <section class="section-block generous-space"><div class="section-heading-row"><div><p class="section-kicker">Suggested For You</p><h2>Recommendations shaped by your previous activity.</h2></div></div><div id="recommendations" class="event-stream"></div></section>
+    </main>
+    <div id="modal" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModal()" aria-label="Close dialog">x</button><p class="section-kicker" id="modal-title"></p><div id="modal-message" class="modal-message"></div><div id="modal-buttons" class="modal-actions"></div></div></div>
+    <script src="script.js"></script>
+</body>
+</html>
