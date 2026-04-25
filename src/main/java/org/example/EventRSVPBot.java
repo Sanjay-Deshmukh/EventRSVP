@@ -18,9 +18,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,8 +26,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class EventRSVPBot extends TelegramLongPollingBot {
-    private static final Path PROJECT_ROOT = resolveProjectRoot();
-    private static final String DATABASE_URL = "jdbc:sqlite:" + PROJECT_ROOT.resolve("eventrsvp.db").toString();
+    private static final String DATABASE_URL = AppConfig.databaseUrl();
 
     static class Event {
         String name;
@@ -50,7 +47,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     }
 
     private final Map<String, Event> events = new HashMap<>();
-    private final Set<Long> adminUserIds = new HashSet<>(Collections.singletonList(1795028355L));
+    private final Set<Long> adminUserIds = new HashSet<>(AppConfig.adminTelegramUserIds());
     private final Map<String, String> userFeedback = new HashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private Connection dbConnection;
@@ -66,11 +63,11 @@ public class EventRSVPBot extends TelegramLongPollingBot {
         loadEventsFromDatabase();
     }
 
-    private final String botToken = "8112144137:AAGJ4_6Ubt07RggBvbtrmMTMXG7jwPJxn8Q";
+    private final String botToken = AppConfig.botToken();
 
     @Override
     public String getBotUsername() {
-        return "TELERSVPBOT";
+        return AppConfig.botUsername();
     }
 
     @Override
@@ -596,7 +593,9 @@ public class EventRSVPBot extends TelegramLongPollingBot {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(qrData, BarcodeFormat.QR_CODE, 300, 300);
 
-            File qrFile = new File("qr_" + eventName.replaceAll("\\s+", "_") + "_" + username + ".png");
+            File qrFile = AppConfig.dataDir()
+                .resolve("qr_" + eventName.replaceAll("\\s+", "_") + "_" + username + ".png")
+                .toFile();
             MatrixToImageWriter.writeToPath(bitMatrix, "PNG", qrFile.toPath());
 
             SendPhoto sendPhoto = new SendPhoto();
@@ -767,12 +766,12 @@ public class EventRSVPBot extends TelegramLongPollingBot {
                 sheet.autoSizeColumn(i);
             }
 
-            File excelFile = new File("rsvp_export.xlsx");
+            File excelFile = AppConfig.dataDir().resolve("rsvp_export.xlsx").toFile();
             try (FileOutputStream fileOut = new FileOutputStream(excelFile)) {
                 workbook.write(fileOut);
             }
 
-            sendMessage(chatId, " Excel file created: rsvp_export.xlsx");
+            sendMessage(chatId, " Excel file created: " + excelFile.getName());
         } catch (Exception e) {
             sendMessage(chatId, " Error creating Excel file.");
             e.printStackTrace();
@@ -826,7 +825,8 @@ public class EventRSVPBot extends TelegramLongPollingBot {
             }
         }
 
-        try (FileWriter writer = new FileWriter("rsvp_export.txt")) {
+        File exportFile = AppConfig.dataDir().resolve("rsvp_export.txt").toFile();
+        try (FileWriter writer = new FileWriter(exportFile)) {
             writer.write(sb.toString());
             sendMessage(chatId, " RSVP data saved.");
         } catch (IOException e) {
@@ -837,7 +837,7 @@ public class EventRSVPBot extends TelegramLongPollingBot {
     private void initDatabase() {
         try {
             dbConnection = DriverManager.getConnection(DATABASE_URL);
-            System.out.println("Bot using database: " + PROJECT_ROOT.resolve("eventrsvp.db"));
+            System.out.println("Bot using database: " + AppConfig.dataDir().resolve("eventrsvp.db"));
             Statement stmt = dbConnection.createStatement();
             
             stmt.execute("CREATE TABLE IF NOT EXISTS events (" +
@@ -968,24 +968,19 @@ public class EventRSVPBot extends TelegramLongPollingBot {
         }
     }
 
+    public static EventRSVPBot startBot() throws TelegramApiException {
+        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+        EventRSVPBot bot = new EventRSVPBot();
+        telegramBotsApi.registerBot(bot);
+        System.out.println("Telegram bot started as @" + bot.getBotUsername());
+        return bot;
+    }
+
     public static void main(String[] args) {
         try {
-            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            EventRSVPBot bot = new EventRSVPBot();
-            telegramBotsApi.registerBot(bot);
+            startBot();
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    private static Path resolveProjectRoot() {
-        Path current = Paths.get("").toAbsolutePath().normalize();
-        while (current != null) {
-            if (Files.exists(current.resolve("pom.xml")) && Files.exists(current.resolve("web"))) {
-                return current;
-            }
-            current = current.getParent();
-        }
-        return Paths.get("").toAbsolutePath().normalize();
     }
 }

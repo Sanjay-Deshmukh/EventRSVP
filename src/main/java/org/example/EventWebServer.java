@@ -13,7 +13,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -25,13 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventWebServer {
     private static Connection dbConnection;
-    private static final int PORT = 8030;
+    private static final int PORT = AppConfig.webPort();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final Map<String, SessionInfo> SESSIONS = new ConcurrentHashMap<>();
     private static final long SESSION_HOURS = 24;
     private static final String SESSION_COOKIE = "eventrsvp_session";
-    private static final Path PROJECT_ROOT = resolveProjectRoot();
-    private static final String DATABASE_URL = "jdbc:sqlite:" + PROJECT_ROOT.resolve("eventrsvp.db").toString();
+    private static final Path PROJECT_ROOT = AppConfig.projectRoot();
+    private static final String DATABASE_URL = AppConfig.databaseUrl();
 
     private static class SessionInfo {
         private final String username;
@@ -46,10 +45,15 @@ public class EventWebServer {
     }
 
     public static void main(String[] args) throws Exception {
+        start();
+    }
+
+    public static HttpServer start() throws IOException {
         initDatabase();
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         server.createContext("/", EventWebServer::handleStaticFiles);
+        server.createContext("/api/health", EventWebServer::handleHealthCheck);
 
         server.createContext("/api/auth/register", EventWebServer::handleRegister);
         server.createContext("/api/auth/login", EventWebServer::handleLogin);
@@ -73,18 +77,19 @@ public class EventWebServer {
 
         server.setExecutor(null);
         server.start();
-        System.out.println("Web server started on http://localhost:" + PORT);
-        System.out.println("Default admin login: admin / admin123");
+        System.out.println("Web server started on port " + PORT);
+        System.out.println("Using database: " + AppConfig.dataDir().resolve("eventrsvp.db"));
+        System.out.println("Default admin username: " + AppConfig.defaultAdminUsername());
+        return server;
     }
 
     private static void initDatabase() {
         try {
             dbConnection = DriverManager.getConnection(DATABASE_URL);
-            System.out.println("Using database: " + PROJECT_ROOT.resolve("eventrsvp.db"));
             ensureCoreTables();
             ensureDefaultAdmin();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Unable to initialize database.", e);
         }
     }
 
@@ -126,12 +131,23 @@ public class EventWebServer {
         try (PreparedStatement pstmt = dbConnection.prepareStatement(
             "INSERT OR IGNORE INTO users (username, passwordHash, role, createdAt) VALUES (?, ?, ?, ?)"
         )) {
-            pstmt.setString(1, "admin");
-            pstmt.setString(2, hashPassword("admin123"));
+            pstmt.setString(1, AppConfig.defaultAdminUsername());
+            pstmt.setString(2, hashPassword(AppConfig.defaultAdminPassword()));
             pstmt.setString(3, "admin");
             pstmt.setString(4, LocalDateTime.now().toString());
             pstmt.executeUpdate();
         }
+    }
+
+    private static void handleHealthCheck(HttpExchange exchange) throws IOException {
+        if (!"GET".equals(exchange.getRequestMethod())) {
+            sendJson(exchange, 405, new JSONObject().put("error", "Method not allowed"));
+            return;
+        }
+
+        sendJson(exchange, 200, new JSONObject()
+            .put("ok", true)
+            .put("port", PORT));
     }
 
     private static void handleStaticFiles(HttpExchange exchange) throws IOException {
@@ -1079,16 +1095,30 @@ public class EventWebServer {
     private static void establishSession(HttpExchange exchange, String username, String role) {
         String token = generateToken();
         SESSIONS.put(token, new SessionInfo(username, role, LocalDateTime.now().plusHours(SESSION_HOURS)));
+        StringBuilder cookieValue = new StringBuilder()
+            .append(SESSION_COOKIE)
+            .append("=")
+            .append(token)
+            .append("; Path=/; HttpOnly; SameSite=Lax");
+        if (AppConfig.secureCookies()) {
+            cookieValue.append("; Secure");
+        }
         exchange.getResponseHeaders().add(
             "Set-Cookie",
-            SESSION_COOKIE + "=" + token + "; Path=/; HttpOnly; SameSite=Lax"
+            cookieValue.toString()
         );
     }
 
     private static void clearSessionCookie(HttpExchange exchange) {
+        StringBuilder cookieValue = new StringBuilder()
+            .append(SESSION_COOKIE)
+            .append("=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+        if (AppConfig.secureCookies()) {
+            cookieValue.append("; Secure");
+        }
         exchange.getResponseHeaders().add(
             "Set-Cookie",
-            SESSION_COOKIE + "=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
+            cookieValue.toString()
         );
     }
 
@@ -1101,18 +1131,6 @@ public class EventWebServer {
         }
         return token.toString();
     }
-
-    private static Path resolveProjectRoot() {
-        Path current = Paths.get("").toAbsolutePath().normalize();
-        while (current != null) {
-            if (Files.exists(current.resolve("pom.xml")) && Files.exists(current.resolve("web"))) {
-                return current;
-            }
-            current = current.getParent();
-        }
-        return Paths.get("").toAbsolutePath().normalize();
-    }
-
     private static String sanitizeUsername(String username) {
         if (username == null) {
             return null;

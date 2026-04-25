@@ -79,6 +79,48 @@ EventRSVP is a Java-based Telegram bot designed to manage event invitations and 
    mvn exec:java -Dexec.mainClass="org.example.EventRSVPBot"
    ```
 
+## Deploy on Render
+
+This repo now includes a `Dockerfile` and `render.yaml` so you can deploy it as a single Render web service.
+
+### Why a single service?
+
+- The Telegram bot and web app both use the same SQLite database.
+- Render persistent disks are attached to one service instance only.
+- Running both processes in one service keeps SQLite safe and simple.
+
+### Render setup
+
+1. Push this repository to GitHub, GitLab, or Bitbucket.
+2. In Render, create a new Blueprint or Web Service from the repo.
+3. Use the included `render.yaml`.
+4. Keep the service on a paid plan with a persistent disk attached.
+5. Set these environment variables in Render:
+   - `BOT_TOKEN` = your Telegram bot token
+   - `TELEGRAM_ADMIN_USER_IDS` = comma-separated Telegram user IDs for admins
+   - `WEB_ADMIN_PASSWORD` = password for the web admin user
+
+Optional environment variables:
+- `WEB_ADMIN_USERNAME` default is `admin`
+- `BOT_USERNAME` default is `TELERSVPBOT`
+- `COOKIE_SECURE` should stay `true` on Render
+
+### Important Render notes
+
+- The app reads Render's `PORT` automatically.
+- The SQLite database is stored in `EVENTRSVP_DATA_DIR`, which is set to `/data` in `render.yaml`.
+- Health checks use `/api/health`.
+- Because the service uses a persistent disk, it should run as a single instance.
+
+### Local start for the full stack
+
+To run the web app and Telegram bot together with the new shared entrypoint:
+
+```bash
+set BOT_TOKEN=your_bot_token
+mvn exec:java -Dexec.mainClass="org.example.RenderApp"
+```
+
 ## Available Commands
 
 ### User Commands
