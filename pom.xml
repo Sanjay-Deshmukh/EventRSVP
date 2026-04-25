@@ -60,4 +60,12 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>production</id>
+            <properties>
+                <env>production</env>
+            </properties>
+        </profile>
+    </profiles>
 </project>

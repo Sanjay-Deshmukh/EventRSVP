@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: eventrsvp
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    disk:
+      name: eventrsvp-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: EVENTRSVP_DATA_DIR
+        value: /data
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_USERNAME
+        value: TELERSVPBOT
+      - key: TELEGRAM_ADMIN_USER_IDS
+        sync: false
+      - key: WEB_ADMIN_USERNAME
+        value: admin
+      - key: WEB_ADMIN_PASSWORD
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
