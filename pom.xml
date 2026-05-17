@@ -47,6 +47,12 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>production</id>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
