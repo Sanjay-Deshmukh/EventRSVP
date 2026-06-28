@@ -1,7 +1,11 @@
 # EventRSVP Telegram Bot
 
 EventRSVP is a Java-based Telegram bot designed to manage event invitations and RSVPs. Built using Maven, this bot allows users to create events, invite others, and track responses easily with advanced features like event recommendations, conflict detection, and smart scheduling.
+## Dashboard
 
+<p align="center">
+  <img src="./dashboard.png" alt="Dashboard Screenshot" width="900"/>
+</p>
 ## Features
 
 ### Core Features
